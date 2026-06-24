@@ -41,7 +41,7 @@ async function fetchWithRetry(url, context) {
         console.error(
           `  HTTP ${resp.status} for ${context} (attempt ${attempt}/${FETCH_RETRY_ATTEMPTS}), retrying...`,
         );
-        await sleep(FETCH_RETRY_DELAY_MS);
+        await sleep(FETCH_RETRY_DELAY_MS * attempt);
         continue;
       }
 
@@ -54,12 +54,14 @@ async function fetchWithRetry(url, context) {
         console.error(
           `  Network error (${code}) for ${context} (attempt ${attempt}/${FETCH_RETRY_ATTEMPTS}), retrying...`,
         );
-        await sleep(FETCH_RETRY_DELAY_MS);
+        await sleep(FETCH_RETRY_DELAY_MS * attempt);
         continue;
       }
       throw err;
     }
   }
+
+  throw new Error(`Exhausted retries for ${context}`);
 }
 
 // Decode HTML entities that DBLP includes in titles/names
