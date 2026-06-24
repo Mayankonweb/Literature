@@ -28,6 +28,10 @@ function getErrorCode(err) {
   return err?.cause?.code || err?.code || null;
 }
 
+function getRetryDelay(attempt) {
+  return FETCH_RETRY_DELAY_MS * 2 ** (attempt - 1);
+}
+
 async function fetchWithRetry(url, context) {
   let lastError = null;
 
@@ -47,7 +51,7 @@ async function fetchWithRetry(url, context) {
         console.error(
           `  HTTP ${resp.status} for ${context} (attempt ${attempt}/${FETCH_RETRY_ATTEMPTS}), retrying...`,
         );
-        await sleep(FETCH_RETRY_DELAY_MS * attempt);
+        await sleep(getRetryDelay(attempt));
         lastError = statusError;
         continue;
       }
@@ -56,11 +60,12 @@ async function fetchWithRetry(url, context) {
       break;
     } catch (err) {
       const code = getErrorCode(err);
-      if (RETRYABLE_ERROR_CODES.has(code) && attempt < FETCH_RETRY_ATTEMPTS) {
+      const isRetryableNetwork = Boolean(code) && RETRYABLE_ERROR_CODES.has(code);
+      if (isRetryableNetwork && attempt < FETCH_RETRY_ATTEMPTS) {
         console.error(
           `  Network error (${code}) for ${context} (attempt ${attempt}/${FETCH_RETRY_ATTEMPTS}), retrying...`,
         );
-        await sleep(FETCH_RETRY_DELAY_MS * attempt);
+        await sleep(getRetryDelay(attempt));
         lastError = err;
         continue;
       }
@@ -69,7 +74,7 @@ async function fetchWithRetry(url, context) {
     }
   }
 
-  throw lastError || new Error(`Exhausted retries for ${context}`);
+  throw lastError;
 }
 
 // Decode HTML entities that DBLP includes in titles/names
