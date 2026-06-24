@@ -61,7 +61,6 @@ async function fetchWithRetry(url, context) {
     }
   }
 
-  throw new Error(`Exhausted retries for ${context}`);
 }
 
 // Decode HTML entities that DBLP includes in titles/names
