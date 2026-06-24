@@ -16,6 +16,7 @@ import {
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const FETCH_RETRY_ATTEMPTS = 5;
 const FETCH_RETRY_DELAY_MS = 5000;
+const FETCH_MAX_RETRY_DELAY_MS = 30000;
 const RETRYABLE_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 const RETRYABLE_ERROR_CODES = new Set([
   "ECONNRESET",
@@ -29,7 +30,10 @@ function getErrorCode(err) {
 }
 
 function getRetryDelay(attempt) {
-  return FETCH_RETRY_DELAY_MS * 2 ** (attempt - 1);
+  return Math.min(
+    FETCH_RETRY_DELAY_MS * 2 ** (attempt - 1),
+    FETCH_MAX_RETRY_DELAY_MS,
+  );
 }
 
 async function fetchWithRetry(url, context) {
@@ -60,7 +64,7 @@ async function fetchWithRetry(url, context) {
       break;
     } catch (err) {
       const code = getErrorCode(err);
-      const isRetryableNetwork = Boolean(code) && RETRYABLE_ERROR_CODES.has(code);
+      const isRetryableNetwork = RETRYABLE_ERROR_CODES.has(code);
       if (isRetryableNetwork && attempt < FETCH_RETRY_ATTEMPTS) {
         console.error(
           `  Network error (${code}) for ${context} (attempt ${attempt}/${FETCH_RETRY_ATTEMPTS}), retrying...`,
