@@ -113,6 +113,153 @@ export const VENUES = [
     color: "#6366f1",
     dblpQuery: "stream:journals/compsec:",
   },
+
+  // ── Networking / communications / systems venues ──────────
+  // A few DBLP stream slugs below are marked VERIFY: confirm the hit count
+  // before relying on incremental updates, e.g.
+  //   https://dblp.org/search/publ/api?q=stream:journals/<slug>:&format=json&h=0
+  {
+    key: "TOPS",
+    name: "ACM TOPS",
+    fullName: "ACM Transactions on Privacy and Security",
+    color: "#a3e635",
+    // Formerly TISSEC; DBLP still keys the stream as tissec.
+    dblpQuery: "stream:journals/tissec:",
+  },
+  {
+    key: "TOCS",
+    name: "ACM TOCS",
+    fullName: "ACM Transactions on Computer Systems",
+    color: "#fb7185",
+    dblpQuery: "stream:journals/tocs:",
+  },
+  {
+    key: "TIOT",
+    name: "ACM TIOT",
+    fullName: "ACM Transactions on Internet of Things",
+    color: "#2dd4bf",
+    dblpQuery: "stream:journals/tiot:",
+  },
+  {
+    key: "WISEC",
+    name: "WiSec",
+    fullName:
+      "ACM Conference on Security and Privacy in Wireless and Mobile Networks",
+    color: "#e879f9",
+    dblpQuery: "venue:WISEC:",
+  },
+  {
+    key: "COMNET",
+    name: "Comput. Netw.",
+    fullName: "Computer Networks (Elsevier)",
+    color: "#38bdf8",
+    dblpQuery: "stream:journals/cn:",
+  },
+  {
+    key: "COMST",
+    name: "IEEE COMST",
+    fullName: "IEEE Communications Surveys & Tutorials",
+    color: "#4ade80",
+    dblpQuery: "stream:journals/comsur:",
+  },
+  {
+    key: "COMMAG",
+    name: "IEEE Comm. Mag.",
+    fullName: "IEEE Communications Magazine",
+    color: "#fcd34d",
+    dblpQuery: "stream:journals/icm:", // VERIFY slug
+  },
+  {
+    key: "COMSTDMAG",
+    name: "IEEE Comm. Std. Mag.",
+    fullName: "IEEE Communications Standards Magazine",
+    color: "#fdba74",
+    dblpQuery: "stream:journals/comstd:", // VERIFY slug
+  },
+  {
+    key: "IOTJ",
+    name: "IEEE IoT-J",
+    fullName: "IEEE Internet of Things Journal",
+    color: "#67e8f9",
+    dblpQuery: "stream:journals/iotj:",
+  },
+  {
+    key: "JSAC",
+    name: "IEEE JSAC",
+    fullName: "IEEE Journal on Selected Areas in Communications",
+    color: "#818cf8",
+    dblpQuery: "stream:journals/jsac:",
+  },
+  {
+    key: "IEEENET",
+    name: "IEEE Network",
+    fullName: "IEEE Network",
+    color: "#c4b5fd",
+    dblpQuery: "stream:journals/network:",
+  },
+  {
+    key: "NETLET",
+    name: "IEEE Netw. Lett.",
+    fullName: "IEEE Networking Letters",
+    color: "#f0abfc",
+    dblpQuery: "stream:journals/ieeenl:", // VERIFY slug
+  },
+  {
+    key: "IEEESP",
+    name: "IEEE S&P Mag.",
+    fullName: "IEEE Security & Privacy (Magazine)",
+    color: "#facc15",
+    dblpQuery: "stream:journals/ieeesp:",
+  },
+  {
+    key: "SYSJ",
+    name: "IEEE Syst. J.",
+    fullName: "IEEE Systems Journal",
+    color: "#5eead4",
+    dblpQuery: "stream:journals/sj:", // VERIFY slug
+  },
+  {
+    key: "TCCN",
+    name: "IEEE TCCN",
+    fullName: "IEEE Transactions on Cognitive Communications and Networking",
+    color: "#93c5fd",
+    dblpQuery: "stream:journals/tccn:",
+  },
+  {
+    key: "TCOM",
+    name: "IEEE TCOM",
+    fullName: "IEEE Transactions on Communications",
+    color: "#fca5a5",
+    dblpQuery: "stream:journals/tcom:",
+  },
+  {
+    key: "TWC",
+    name: "IEEE TWC",
+    fullName: "IEEE Transactions on Wireless Communications",
+    color: "#d8b4fe",
+    dblpQuery: "stream:journals/twc:",
+  },
+  {
+    key: "WCMAG",
+    name: "IEEE Wireless Comm.",
+    fullName: "IEEE Wireless Communications",
+    color: "#7dd3fc",
+    dblpQuery: "stream:journals/wc:", // VERIFY slug
+  },
+  {
+    key: "TON",
+    name: "IEEE/ACM ToN",
+    fullName: "IEEE/ACM Transactions on Networking",
+    color: "#86efac",
+    dblpQuery: "stream:journals/ton:",
+  },
+  {
+    key: "PACMNET",
+    name: "ACM PACMNET",
+    fullName: "Proceedings of the ACM on Networking",
+    color: "#fda4af",
+    dblpQuery: "stream:journals/pacmnet:",
+  },
 ];
 
 // DBLP API settings

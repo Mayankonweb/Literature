@@ -84,6 +84,7 @@
     --color-SP: #c084fc;
     --color-CRYPTO: #fbbf24;
     --color-EUROCRYPT: #22d3ee;
+    --color-PETS: #14b8a6;
     --color-EuroSP: #3b82f6;
     --color-VehicleSec: #f97316;
     --color-TITS: #10b981;
@@ -92,6 +93,26 @@
     --color-TIFS: #f59e0b;
     --color-TDSC: #ef4444;
     --color-COMPSEC: #6366f1;
+    --color-TOPS: #a3e635;
+    --color-TOCS: #fb7185;
+    --color-TIOT: #2dd4bf;
+    --color-WISEC: #e879f9;
+    --color-COMNET: #38bdf8;
+    --color-COMST: #4ade80;
+    --color-COMMAG: #fcd34d;
+    --color-COMSTDMAG: #fdba74;
+    --color-IOTJ: #67e8f9;
+    --color-JSAC: #818cf8;
+    --color-IEEENET: #c4b5fd;
+    --color-NETLET: #f0abfc;
+    --color-IEEESP: #facc15;
+    --color-SYSJ: #5eead4;
+    --color-TCCN: #93c5fd;
+    --color-TCOM: #fca5a5;
+    --color-TWC: #d8b4fe;
+    --color-WCMAG: #7dd3fc;
+    --color-TON: #86efac;
+    --color-PACMNET: #fda4af;
 }
 
 /* ── Light Theme ─────────────────────────────── */
