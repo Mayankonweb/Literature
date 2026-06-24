@@ -117,8 +117,16 @@ export const VENUES = [
 
 // DBLP API settings
 export const DBLP_API_BASE = "https://dblp.org/search/publ/api";
-export const DBLP_HITS_PER_PAGE = 1000;
+// Smaller pages keep each request (and each retry) cheap and make large
+// transfers far less likely to stall and hit a body timeout. 500 means ~20
+// requests for a fully-capped venue (see DBLP_MAX_RESULTS).
+export const DBLP_HITS_PER_PAGE = 500;
 export const DBLP_DELAY_MS = 3000; // Delay between API requests to be polite
+// DBLP's search API only serves the first 10,000 results of any query
+// (responses past offset 10000 come back with an empty hit list). Results are
+// returned newest-first, so this window always covers the most recent papers —
+// we just can't mirror a venue's entire back-catalog beyond it.
+export const DBLP_MAX_RESULTS = 10000;
 
 // Semantic Scholar API settings
 export const S2_API_BASE = "https://api.semanticscholar.org/graph/v1/paper";

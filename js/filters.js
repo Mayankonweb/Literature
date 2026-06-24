@@ -2,10 +2,11 @@
 
 const FilterState = {
   query: "",
-  venues: new Set(ALL_VENUES),
+  venues: new Set(DEFAULT_VENUES), // A* / top-tier only by default
   yearMin: null,
   yearMax: null,
   includeWorkshops: true,
+  paperTypes: null, // FilterUI initialises this to all types
   sort: "relevance",
   _listeners: [],
 
@@ -60,6 +61,13 @@ const FilterState = {
     if (params.has("workshops")) {
       this.includeWorkshops = params.get("workshops") !== "0";
     }
+    if (params.has("types")) {
+      const t = params
+        .get("types")
+        .split(",")
+        .filter(Boolean);
+      if (t.length) this.paperTypes = new Set(t);
+    }
     if (
       params.has("sort") &&
       ["relevance", "year-desc", "year-asc", "citations"].includes(
@@ -82,6 +90,9 @@ const FilterState = {
     if (this.yearMin) params.set("yearMin", this.yearMin);
     if (this.yearMax) params.set("yearMax", this.yearMax);
     if (!this.includeWorkshops) params.set("workshops", "0");
+    if (this.paperTypes && this.paperTypes.size < PAPER_TYPES.length) {
+      params.set("types", [...this.paperTypes].join(","));
+    }
     if (this.sort !== "relevance") params.set("sort", this.sort);
 
     const qs = params.toString();

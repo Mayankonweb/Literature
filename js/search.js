@@ -118,8 +118,8 @@ const SearchEngine = {
       papers = papers.filter((p) => filters.venues.has(p.venue));
     }
 
-    if (!filters.includeWorkshops) {
-      papers = papers.filter((p) => !p.isWorkshop);
+    if (filters.paperTypes) {
+      papers = papers.filter((p) => filters.paperTypes.has(paperTypeOf(p)));
     }
 
     if (filters.yearMin) {
@@ -166,7 +166,8 @@ const SearchEngine = {
       if (filters.venues && filters.venues.size < ALL_VENUES.length) {
         if (!filters.venues.has(result.venue)) return false;
       }
-      if (!filters.includeWorkshops && result.isWorkshop) return false;
+      if (filters.paperTypes && !filters.paperTypes.has(paperTypeOf(result)))
+        return false;
       if (filters.yearMin && result.year < filters.yearMin) return false;
       if (filters.yearMax && result.year > filters.yearMax) return false;
       return true;

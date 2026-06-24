@@ -14,9 +14,7 @@
   const themeIcon = document.getElementById("themeIcon");
   const yearMinInput = document.getElementById("yearMin");
   const yearMaxInput = document.getElementById("yearMax");
-  const workshopToggle = document.getElementById("workshopToggle");
   const sortSelect = document.getElementById("sortSelect");
-  const venueChips = document.querySelectorAll(".venue-chip");
 
   // Pagination state for lazy loading
   let currentResults = [];
@@ -70,9 +68,13 @@
     const venueColor = `var(--color-${paper.venue})`;
 
     let badges = `<span class="venue-badge" style="--badge-color: ${venueColor}">${escapeHtml(VENUE_NAMES[paper.venue] || paper.venue)}</span>`;
-    if (paper.isWorkshop) {
-      badges += `<span class="workshop-badge">Workshop</span>`;
-    }
+
+    // Paper type shown as an inline tag next to the title
+    const type = paperTypeOf(paper); // "full" | "workshop" | "poster" | "demo"
+    const TYPE_LABELS = { workshop: "Workshop", poster: "Poster", demo: "Demo" };
+    const typeTag = TYPE_LABELS[type]
+      ? `<span class="paper-type-tag">${TYPE_LABELS[type]}</span>`
+      : "";
 
     let meta = `<span class="year">${paper.year}</span>`;
     if (paper.citationCount != null && paper.citationCount > 0) {
@@ -107,7 +109,7 @@
         <div class="paper-top">
           <div class="paper-badges">${badges}</div>
           <div class="paper-info">
-            <div class="paper-title"><a href="${escapeHtml(link)}" target="_blank" rel="noopener">${title}</a></div>
+            <div class="paper-title"><a href="${escapeHtml(link)}" target="_blank" rel="noopener">${title}</a>${typeTag}</div>
             <div class="paper-authors">${authors}</div>
             <div class="paper-meta">
               ${meta}
@@ -254,26 +256,12 @@
       }
     });
 
-    // Venue chips
-    venueChips.forEach((chip) => {
-      chip.addEventListener("click", function () {
-        const venue = this.dataset.venue;
-        this.classList.toggle("active");
-        FilterState.toggleVenue(venue);
-      });
-    });
-
     // Year inputs
     yearMinInput.addEventListener("change", function () {
       FilterState.set("yearMin", this.value ? parseInt(this.value, 10) : null);
     });
     yearMaxInput.addEventListener("change", function () {
       FilterState.set("yearMax", this.value ? parseInt(this.value, 10) : null);
-    });
-
-    // Workshop toggle
-    workshopToggle.addEventListener("change", function () {
-      FilterState.set("includeWorkshops", this.checked);
     });
 
     // Sort select
@@ -309,14 +297,8 @@
   function syncUIFromState() {
     searchInput.value = FilterState.query || "";
 
-    venueChips.forEach((chip) => {
-      const venue = chip.dataset.venue;
-      chip.classList.toggle("active", FilterState.venues.has(venue));
-    });
-
     if (FilterState.yearMin) yearMinInput.value = FilterState.yearMin;
     if (FilterState.yearMax) yearMaxInput.value = FilterState.yearMax;
-    workshopToggle.checked = FilterState.includeWorkshops;
     sortSelect.value = FilterState.sort;
   }
 
@@ -326,13 +308,16 @@
     FilterState.readFromURL();
     syncUIFromState();
     bindEvents();
+    FilterUI.init(); // builds the grouped venue + type dropdowns
 
     try {
       const stats = await SearchEngine.init();
 
       // Update stats line
       if (stats) {
-        statsLine.textContent = `Searching across ${stats.totalPapers.toLocaleString()} papers from 6 top-tier conferences (${stats.yearRange.min}\u2013${stats.yearRange.max})`;
+        statsLine.textContent =
+          `Searching across ${stats.totalPapers.toLocaleString()} papers from ` +
+          `${ALL_VENUES.length} venues (${stats.yearRange.min}\u2013${stats.yearRange.max})`;
         if (stats.lastUpdated) lastUpdatedEl.textContent = stats.lastUpdated;
         if (!FilterState.yearMin)
           yearMinInput.placeholder = stats.yearRange.min;
