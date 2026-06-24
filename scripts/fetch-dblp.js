@@ -14,6 +14,72 @@ import {
 } from "./config.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const FETCH_RETRY_ATTEMPTS = 5;
+const FETCH_RETRY_DELAY_MS = 5000;
+const FETCH_MAX_RETRY_DELAY_MS = 30000;
+const RETRYABLE_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
+const RETRYABLE_ERROR_CODES = new Set([
+  "ECONNRESET",
+  "ENOTFOUND",
+  "EAI_AGAIN",
+  "ETIMEDOUT",
+]);
+
+function getErrorCode(err) {
+  return err?.cause?.code || err?.code || null;
+}
+
+function getRetryDelay(attempt) {
+  return Math.min(
+    FETCH_RETRY_DELAY_MS * 2 ** (attempt - 1),
+    FETCH_MAX_RETRY_DELAY_MS,
+  );
+}
+
+async function fetchWithRetry(url, context) {
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= FETCH_RETRY_ATTEMPTS; attempt += 1) {
+    try {
+      const resp = await fetch(url);
+      if (resp.ok) return resp;
+
+      const statusError = new Error(
+        `HTTP ${resp.status} for ${context} (attempt ${attempt}/${FETCH_RETRY_ATTEMPTS})`,
+      );
+
+      if (
+        RETRYABLE_HTTP_STATUSES.has(resp.status) &&
+        attempt < FETCH_RETRY_ATTEMPTS
+      ) {
+        console.error(
+          `  HTTP ${resp.status} for ${context} (attempt ${attempt}/${FETCH_RETRY_ATTEMPTS}), retrying...`,
+        );
+        await sleep(getRetryDelay(attempt));
+        lastError = statusError;
+        continue;
+      }
+
+      lastError = statusError;
+      break;
+    } catch (err) {
+      const code = getErrorCode(err);
+      const isRetryableNetwork = RETRYABLE_ERROR_CODES.has(code);
+      if (isRetryableNetwork && attempt < FETCH_RETRY_ATTEMPTS) {
+        console.error(
+          `  Network error (${code}) for ${context} (attempt ${attempt}/${FETCH_RETRY_ATTEMPTS}), retrying...`,
+        );
+        await sleep(getRetryDelay(attempt));
+        lastError = err;
+        continue;
+      }
+      lastError = err;
+      break;
+    }
+  }
+
+  throw lastError;
+}
 
 // Decode HTML entities that DBLP includes in titles/names
 function decodeHtmlEntities(str) {
@@ -66,7 +132,7 @@ async function fetchVenue(venue) {
   // First, get the total count
   const countUrl = `${DBLP_API_BASE}?q=${encodeURIComponent(venue.dblpQuery)}&format=json&h=0`;
   console.log(`  Counting ${venue.key}...`);
-  const countResp = await fetch(countUrl);
+  const countResp = await fetchWithRetry(countUrl, `${venue.key} count`);
   const countData = await countResp.json();
   const total = parseInt(countData.result.hits["@total"], 10);
   console.log(`  ${venue.key}: ${total} papers total`);
@@ -77,14 +143,10 @@ async function fetchVenue(venue) {
       `  Fetching ${venue.key} [${offset}..${offset + DBLP_HITS_PER_PAGE}]`,
     );
 
-    const resp = await fetch(url);
-    if (!resp.ok) {
-      console.error(
-        `  HTTP ${resp.status} for ${venue.key} at offset ${offset}, retrying...`,
-      );
-      await sleep(5000);
-      continue;
-    }
+    const resp = await fetchWithRetry(
+      url,
+      `${venue.key} at offset ${offset}`,
+    );
 
     const data = await resp.json();
     const hits = data.result.hits.hit;
