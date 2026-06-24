@@ -1,5 +1,7 @@
 // Venue configuration for SLS (Security Literature Search)
-// To add a new conference, add an entry here and update index.html filter chips
+// To add a new conference/journal: add an entry here, add it to the relevant
+// group in js/utils.js (VENUE_GROUPS), add a --color-<KEY> in css/style.css,
+// then rebuild (npm run build-data-quick).
 
 export const VENUES = [
   {
@@ -30,13 +32,13 @@ export const VENUES = [
     color: "#a855f7",
     dblpQuery: "venue:SP:",
   },
-  // {
-  //   key: "CRYPTO",
-  //   name: "CRYPTO",
-  //   fullName: "Annual International Cryptology Conference",
-  //   color: "#86efac",
-  //   dblpQuery: "venue:CRYPTO:",
-  // },
+  {
+    key: "CRYPTO",
+    name: "CRYPTO",
+    fullName: "Annual International Cryptology Conference",
+    color: "#d97706",
+    dblpQuery: "venue:CRYPTO:",
+  },
   {
     key: "EUROCRYPT",
     name: "EUROCRYPT",
@@ -44,6 +46,16 @@ export const VENUES = [
       "International Conference on the Theory and Application of Cryptographic Techniques",
     color: "#06b6d4",
     dblpQuery: "venue:EUROCRYPT:",
+  },
+  {
+    key: "PETS",
+    name: "PETS",
+    fullName: "Privacy Enhancing Technologies Symposium",
+    color: "#0d9488",
+    // PETS proceedings are published as PoPETs (Proceedings on Privacy
+    // Enhancing Technologies). Verify the hit count before committing:
+    //   https://dblp.org/search/publ/api?q=stream:journals/popets:&format=json&h=0
+    dblpQuery: "stream:journals/popets:",
   },
   {
     key: "EuroSP",

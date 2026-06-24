@@ -1,0 +1,203 @@
+/* ============================================================
+   SLS — Grouped venue filter + paper-type dropdown
+   Add to the repo as css/sls-filters.css and link it in index.html
+   AFTER css/style.css. Uses the existing design tokens from style.css.
+   ============================================================ */
+
+/* PETS venue color (matches the per-theme :root blocks in style.css).
+   You can instead add `--color-PETS` directly into those :root blocks. */
+:root { --color-PETS: #0d9488; }
+[data-theme="light"] { --color-PETS: #0d9488; }
+[data-theme="dark"]  { --color-PETS: #2dd4bf; }
+
+/* ── Dropdown container row ─────────────────────────────── */
+.venue-menus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* ── Dropdown trigger button ────────────────────────────── */
+.filter-dropdown { position: relative; }
+
+.filter-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-input);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    border-color var(--dur-fast) ease,
+    background var(--dur-fast) ease;
+}
+
+.filter-dropdown-trigger:hover { border-color: var(--border-active); }
+
+.filter-dropdown.open .filter-dropdown-trigger {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.filter-dropdown-trigger .fd-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--fd-dot-color, var(--accent));
+  flex: none;
+}
+
+.filter-dropdown-trigger .fd-count {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+.filter-dropdown-trigger .fd-caret {
+  transition: transform var(--dur-fast) ease;
+  color: var(--text-muted);
+  display: flex;
+}
+.filter-dropdown.open .filter-dropdown-trigger .fd-caret { transform: rotate(180deg); }
+
+/* ── Dropdown popover ───────────────────────────────────── */
+.filter-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  z-index: 200;
+  min-width: 248px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 0.4rem;
+  display: none;
+}
+.filter-dropdown.open .filter-dropdown-menu { display: block; }
+
+.filter-dropdown-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0.55rem 0.5rem;
+}
+.filter-dropdown-head .fd-title {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.filter-dropdown-head .fd-toggle-all {
+  background: none; border: none;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  cursor: pointer;
+  padding: 0.1rem 0.2rem;
+}
+.filter-dropdown-head .fd-toggle-all:hover { color: var(--accent-hover); }
+
+/* ── Dropdown option row ────────────────────────────────── */
+.fd-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.5rem 0.55rem;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.8125rem;
+}
+.fd-option:hover { background: var(--bg-surface); }
+.fd-option.checked { background: var(--accent-soft); }
+
+.fd-check {
+  width: 17px; height: 17px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border-active);
+  background: var(--bg-input);
+  display: flex; align-items: center; justify-content: center;
+  flex: none;
+  color: transparent;
+  transition: all var(--dur-fast) ease;
+}
+.fd-option.checked .fd-check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.fd-swatch { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+.fd-label  { flex: 1; }
+.fd-num    { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text-dim); }
+
+/* ── Active-selection chips row ─────────────────────────── */
+.active-venues {
+  max-width: 960px;
+  margin: 0.75rem auto 0;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.active-venues:empty { display: none; }
+
+.active-venues .av-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  margin-right: 0.15rem;
+}
+
+.av-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  background: color-mix(in srgb, var(--chip-color) 14%, transparent);
+  color: var(--chip-color);
+  border: 1px solid color-mix(in srgb, var(--chip-color) 35%, transparent);
+}
+.av-chip .av-x { cursor: pointer; opacity: 0.6; font-weight: 700; }
+.av-chip .av-x:hover { opacity: 1; }
+
+/* ── Paper-type tag shown inline in result titles ───────── */
+/* Reuses .workshop-badge look; one neutral style covers workshop/poster/demo. */
+.paper-type-tag {
+  display: inline-block;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.4rem;
+  border-radius: 4px;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  .filter-dropdown-menu { min-width: 220px; }
+}

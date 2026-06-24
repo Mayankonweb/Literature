@@ -2,9 +2,6 @@
 
 /**
  * Debounce a function call.
- * @param {Function} fn
- * @param {number} ms - delay in milliseconds
- * @returns {Function}
  */
 function debounce(fn, ms) {
   let timer;
@@ -14,17 +11,13 @@ function debounce(fn, ms) {
   };
 }
 
-/**
- * Truncate text to a max length, appending "..." if needed.
- */
+/** Truncate text to a max length, appending "..." if needed. */
 function truncate(text, maxLen) {
   if (!text || text.length <= maxLen) return text;
   return text.slice(0, maxLen).trimEnd() + "...";
 }
 
-/**
- * Format author list for display. Shows up to `max` authors, then "+ N more".
- */
+/** Format author list for display. Shows up to `max` authors, then "+ N more". */
 function formatAuthors(authors, max = 5) {
   if (!authors || authors.length === 0) return "";
   const names = authors.map((a) => a.name);
@@ -32,9 +25,7 @@ function formatAuthors(authors, max = 5) {
   return names.slice(0, max).join(", ") + ` + ${names.length - max} more`;
 }
 
-/**
- * Escape HTML to prevent XSS.
- */
+/** Escape HTML to prevent XSS. */
 function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str;
@@ -42,7 +33,7 @@ function escapeHtml(str) {
 }
 
 /**
- * Venue display names (short labels used in chips).
+ * Venue display names (short labels used in chips/menus).
  */
 const VENUE_NAMES = {
   CCS: "CCS",
@@ -51,6 +42,7 @@ const VENUE_NAMES = {
   SP: "IEEE S&P",
   CRYPTO: "CRYPTO",
   EUROCRYPT: "EUROCRYPT",
+  PETS: "PETS",
   EuroSP: "EURO S&P",
   VehicleSec: "VehicleSec",
   TITS: "IEEE T-ITS",
@@ -62,16 +54,16 @@ const VENUE_NAMES = {
 };
 
 /**
- * All venue keys.
+ * All venue keys (every venue that exists in the dataset).
  */
-// const ALL_VENUES = ['CCS', 'NDSS', 'USENIX', 'SP', 'CRYPTO', 'EUROCRYPT'];
 const ALL_VENUES = [
   "CCS",
   "NDSS",
   "USENIX",
   "SP",
   "CRYPTO",
-  "EUROCRYPT", // existing
+  "EUROCRYPT",
+  "PETS",
   "EuroSP",
   "VehicleSec",
   "TITS",
@@ -81,3 +73,62 @@ const ALL_VENUES = [
   "TDSC",
   "COMPSEC",
 ];
+
+/**
+ * Grouped venues — drives the collapsible filter sub-menus.
+ * Each group renders as one dropdown in the filter bar.
+ * `dot` is the small color indicator shown on the dropdown trigger.
+ */
+const VENUE_GROUPS = [
+  {
+    id: "conf",
+    label: "Conferences",
+    dot: "#2563eb",
+    venues: [
+      "CCS",
+      "NDSS",
+      "USENIX",
+      "SP",
+      "CRYPTO",
+      "EUROCRYPT",
+      "PETS",
+      "EuroSP",
+      "VehicleSec",
+    ],
+  },
+  {
+    id: "journals",
+    label: "Journals",
+    dot: "#6366f1",
+    venues: ["TITS", "TVT", "VC", "TIFS", "TDSC", "COMPSEC"],
+  },
+];
+
+/**
+ * Venues selected by default on first load (A* / top-tier only).
+ * Everything else is opt-in via the dropdowns.
+ */
+const DEFAULT_VENUES = ["CCS", "NDSS", "USENIX", "SP", "CRYPTO", "EUROCRYPT"];
+
+/**
+ * Paper-type options for the Type dropdown.
+ *
+ * NOTE: the current dataset only distinguishes `isWorkshop` (true/false).
+ * "poster" and "demo" are defined here so the UI is ready, but they will only
+ * have any effect once the build pipeline tags papers with a `paperType` field
+ * (see INTEGRATION.md → "Tagging posters/demos"). Until then, mapping is:
+ *   isWorkshop === true  -> "workshop"
+ *   isWorkshop === false -> "full"
+ */
+const PAPER_TYPES = [
+  { key: "full", name: "Full papers" },
+  { key: "workshop", name: "Workshops" },
+  { key: "poster", name: "Posters" },
+  { key: "demo", name: "Demos" },
+];
+
+/** Resolve a paper's type key from its data fields. */
+function paperTypeOf(paper) {
+  if (paper.paperType) return paper.paperType; // future-proof
+  return paper.isWorkshop ? "workshop" : "full";
+}
