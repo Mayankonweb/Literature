@@ -8,14 +8,16 @@
     "fetch-dblp": "node scripts/fetch-dblp.js",
     "enrich": "node scripts/enrich-abstracts.js",
     "build-index": "node scripts/build-index.js",
-    "build-data": "node scripts/fetch-dblp.js && node scripts/enrich-abstracts.js && node scripts/build-index.js",
-    "build-data-quick": "node scripts/fetch-dblp.js && node scripts/build-index.js",
+    "build-sqlite": "node scripts/build-sqlite.js",
+    "build-data": "node scripts/fetch-dblp.js && node scripts/enrich-abstracts.js && node scripts/build-sqlite.js",
+    "build-data-quick": "node scripts/fetch-dblp.js && node scripts/build-sqlite.js",
     "serve": "npx serve . -l 8000"
   },
   "devDependencies": {
     "minisearch": "^7.1.1"
   },
   "dependencies": {
+    "sql.js-httpvfs": "^0.8.12",
     "undici": "^8.0.2"
   }
 }

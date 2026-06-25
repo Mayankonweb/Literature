@@ -9,7 +9,8 @@
 
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import MiniSearch from "minisearch";
-import { VENUES } from "./config.js";
+import { VENUES, JOURNAL_MAX_ENTRIES } from "./config.js";
+import { trimJournals } from "./trim.js";
 
 function main() {
   // Load papers — prefer enriched, fall back to raw DBLP
@@ -25,7 +26,13 @@ function main() {
     );
   }
 
-  const papers = JSON.parse(readFileSync(inputFile, "utf-8"));
+  const allPapers = JSON.parse(readFileSync(inputFile, "utf-8"));
+  const papers = trimJournals(allPapers);
+  if (papers.length !== allPapers.length) {
+    console.log(
+      `Trimmed journals to newest ${JOURNAL_MAX_ENTRIES}/venue: ${allPapers.length} -> ${papers.length} papers`,
+    );
+  }
   console.log(`Building search index from ${papers.length} papers...`);
 
   // Prepare papers for indexing: add a joined author names field
@@ -91,10 +98,17 @@ function main() {
     mainTrackPapers: papers.filter((p) => !p.isWorkshop).length,
     workshopPapers: papers.filter((p) => p.isWorkshop).length,
     papersWithAbstract: papers.filter((p) => p.abstract).length,
-    yearRange: {
-      min: Math.min(...papers.map((p) => p.year).filter((y) => y > 0)),
-      max: Math.max(...papers.map((p) => p.year)),
-    },
+    // Single-pass min/max: spreading 100k+ years into Math.min/max overflows
+    // the call stack (RangeError: Maximum call stack size exceeded).
+    yearRange: papers.reduce(
+      (range, p) => {
+        const y = p.year;
+        if (y > 0 && y < range.min) range.min = y;
+        if (y > range.max) range.max = y;
+        return range;
+      },
+      { min: Infinity, max: -Infinity },
+    ),
     perVenue: {},
     lastUpdated: new Date().toISOString().split("T")[0],
   };

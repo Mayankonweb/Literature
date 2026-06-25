@@ -16,9 +16,12 @@
   const yearMaxInput = document.getElementById("yearMax");
   const sortSelect = document.getElementById("sortSelect");
 
-  // Pagination state for lazy loading
-  let currentResults = [];
+  // Pagination state for lazy loading (pages are fetched from SQLite on demand)
   let displayedCount = 0;
+  let totalCount = 0;
+  let queryToken = 0; // bumped on each new search to discard stale async results
+  let loadingPage = false;
+  let exhausted = false;
   const PAGE_SIZE = 50;
   let observer = null;
 
@@ -121,14 +124,15 @@
       </div>`;
   }
 
-  function renderResults(papers) {
-    currentResults = papers;
+  function renderFirstPage(papers, total) {
     displayedCount = 0;
+    totalCount = total;
+    exhausted = false;
 
     // Clean up old observer
     if (observer) observer.disconnect();
 
-    if (papers.length === 0) {
+    if (total === 0) {
       const query = FilterState.query;
       resultsEl.innerHTML = `
         <div class="empty-state">
@@ -138,28 +142,21 @@
       return;
     }
 
-    // Sort if not relevance (MiniSearch already sorted by relevance)
-    if (FilterState.sort !== "relevance" || !FilterState.query) {
-      SearchEngine.sortResults(
-        papers,
-        FilterState.sort === "relevance" ? "year-desc" : FilterState.sort,
-      );
-    }
-
     // Results header
     const headerHtml = `
       <div class="results-header">
-        <span class="result-count">${papers.length.toLocaleString()} paper${papers.length !== 1 ? "s" : ""} found</span>
+        <span class="result-count">${total.toLocaleString()} paper${total !== 1 ? "s" : ""} found</span>
       </div>`;
 
     resultsEl.innerHTML =
       headerHtml +
       '<div id="papersList"></div><div id="sentinel" style="height:1px"></div>';
-    loadMorePapers();
+
+    appendPapers(papers);
 
     // Set up IntersectionObserver for lazy loading
     const sentinel = document.getElementById("sentinel");
-    if (sentinel && papers.length > PAGE_SIZE) {
+    if (sentinel && total > displayedCount) {
       observer = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting) loadMorePapers();
@@ -170,17 +167,31 @@
     }
   }
 
-  function loadMorePapers() {
+  function appendPapers(papers) {
     const list = document.getElementById("papersList");
-    if (!list || displayedCount >= currentResults.length) return;
-
-    const end = Math.min(displayedCount + PAGE_SIZE, currentResults.length);
+    if (!list || papers.length === 0) return;
     let html = "";
-    for (let i = displayedCount; i < end; i++) {
-      html += renderPaperCard(currentResults[i]);
-    }
+    for (const p of papers) html += renderPaperCard(p);
     list.insertAdjacentHTML("beforeend", html);
-    displayedCount = end;
+    displayedCount += papers.length;
+  }
+
+  async function loadMorePapers() {
+    if (loadingPage || exhausted || displayedCount >= totalCount) return;
+    loadingPage = true;
+    const token = queryToken;
+    try {
+      const papers = await SearchEngine.query(
+        FilterState,
+        PAGE_SIZE,
+        displayedCount,
+      );
+      if (token !== queryToken) return; // a newer search superseded this one
+      appendPapers(papers);
+      if (papers.length === 0 || displayedCount >= totalCount) exhausted = true;
+    } finally {
+      if (token === queryToken) loadingPage = false;
+    }
   }
 
   function renderSuggestions(suggestions) {
@@ -200,19 +211,26 @@
   }
 
   // ── Search Execution ──────────────────────────
-  function executeSearch() {
+  async function executeSearch() {
     if (!SearchEngine.isReady()) return;
-    const results = SearchEngine.search(FilterState.query, FilterState);
-    renderResults(results);
+    const token = ++queryToken; // invalidate any in-flight page loads
+    loadingPage = false;
+    exhausted = false;
+    const [papers, total] = await Promise.all([
+      SearchEngine.query(FilterState, PAGE_SIZE, 0),
+      SearchEngine.count(FilterState),
+    ]);
+    if (token !== queryToken) return; // a newer search started meanwhile
+    renderFirstPage(papers, total);
   }
 
-  const debouncedSuggest = debounce(function () {
+  const debouncedSuggest = debounce(async function () {
     const q = searchInput.value.trim();
     if (q.length < 2) {
       renderSuggestions([]);
       return;
     }
-    const suggestions = SearchEngine.suggest(q);
+    const suggestions = await SearchEngine.suggest(q);
     renderSuggestions(suggestions);
   }, 150);
 

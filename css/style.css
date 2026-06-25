@@ -573,7 +573,9 @@ a:hover {
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-xs);
     position: relative;
-    z-index: 1;
+    /* Above .results-container (z-index:1) so open dropdown menus render over
+       the paper cards, but below the sticky top nav (z-index:50). */
+    z-index: 10;
 }
 
 @media (min-width: 641px) {

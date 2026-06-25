@@ -1,176 +1,193 @@
-/* SLS — Search engine wrapper around MiniSearch */
+/* SLS — Search engine backed by SQLite (sql.js-httpvfs) over HTTP Range.
+ *
+ * The browser never downloads the whole dataset: queries run against
+ * data/papers.sqlite in a Web Worker, which fetches only the few KB of B-tree
+ * pages each query touches. Results are paginated at the SQL level (LIMIT/
+ * OFFSET) so even a broad browse reads almost nothing up front.
+ */
 
 const SearchEngine = {
-  _index: null,
-  _papers: null, // Map<id, paper>
-  _papersArray: null, // Array of all papers for browse mode
+  _worker: null,
+  _db: null,
   _stats: null,
   _ready: false,
 
-  /** Load search index and papers data. Returns a promise. */
+  /** Spin up the worker, open the DB, and read aggregate stats. */
   async init() {
-    const t0 = performance.now();
-
-    const [indexResp, papersResp, statsResp] = await Promise.all([
-      fetch("data/search-index.json"),
-      fetch("data/papers.json"),
-      fetch("data/stats.json"),
-    ]);
-
-    if (!indexResp.ok || !papersResp.ok) {
+    if (typeof createDbWorker !== "function") {
       throw new Error(
-        "Failed to load data files. Run npm run build-data first.",
+        "sql.js-httpvfs not loaded (js/vendor/sql.js-httpvfs/index.js).",
       );
     }
 
-    const [indexJson, papersJson] = await Promise.all([
-      indexResp.text(),
-      papersResp.json(),
-    ]);
+    const base = "js/vendor/sql.js-httpvfs/";
+    const abs = (p) => new URL(p, document.baseURI).href;
 
-    // Deserialize MiniSearch index
-    this._index = MiniSearch.loadJSON(indexJson, {
-      fields: ["title", "abstract", "authorNames"],
-      storeFields: ["title", "venue", "year", "isWorkshop"],
-    });
+    this._worker = await createDbWorker(
+      [
+        {
+          from: "inline",
+          config: {
+            serverMode: "full",
+            url: abs("data/papers.sqlite"),
+            requestChunkSize: 4096, // matches the DB page_size
+          },
+        },
+      ],
+      abs(base + "sqlite.worker.js"),
+      abs(base + "sql-wasm.wasm"),
+    );
+    this._db = this._worker.db;
 
-    // Build paper lookup map
-    this._papers = new Map();
-    this._papersArray = papersJson;
-    for (const p of papersJson) {
-      this._papers.set(p.id, p);
-    }
-
-    // Load stats
-    if (statsResp.ok) {
-      this._stats = await statsResp.json();
-    }
+    // Stats straight from the DB — no separate stats.json needed.
+    const [agg] = await this._db.query(
+      "SELECT count(*) AS total, min(nullif(year,0)) AS minY, max(year) AS maxY FROM papers",
+    );
+    this._stats = {
+      totalPapers: agg.total,
+      yearRange: { min: agg.minY, max: agg.maxY },
+      lastUpdated: null,
+    };
 
     this._ready = true;
-    const elapsed = (performance.now() - t0).toFixed(0);
-    console.log(`SLS: Loaded ${this._papers.size} papers in ${elapsed}ms`);
-
     return this._stats;
   },
 
-  /** Check if engine is ready. */
   isReady() {
     return this._ready;
   },
 
-  /** Get stats object. */
   getStats() {
     return this._stats;
   },
 
-  /** Get a paper by ID. */
-  getPaper(id) {
-    return this._papers.get(id);
-  },
+  /** Build the FROM/WHERE clause + bound params shared by query() and count(). */
+  _buildWhere(filters) {
+    const where = [];
+    const params = [];
+    let ftsJoin = "";
 
-  /**
-   * Search with query and filters.
-   * Returns array of paper objects (full data).
-   */
-  search(query, filters) {
-    if (!this._ready) return [];
-
-    // Empty query → browse mode
-    if (!query || query.trim() === "") {
-      return this._browse(filters);
+    const q = (filters.query || "").trim();
+    const hasQuery = q.length > 0;
+    if (hasQuery) {
+      // Prefix-match each token, implicit AND. Quoting neutralizes FTS5 syntax
+      // chars in user input so arbitrary text can't produce a parse error.
+      const match = q
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((t) => `"${t.replace(/"/g, '""')}"*`)
+        .join(" ");
+      ftsJoin = "JOIN papers_fts f ON f.rowid = p.id";
+      where.push("papers_fts MATCH ?");
+      params.push(match);
     }
-
-    const filterFn = this._makeFilter(filters);
-    const results = this._index.search(query, {
-      fuzzy: 0.2,
-      prefix: true,
-      boost: { title: 2, authorNames: 0.5 },
-      filter: filterFn,
-    });
-
-    // Map results to full paper objects
-    return results.map((r) => this._papers.get(r.id)).filter(Boolean);
-  },
-
-  /**
-   * Get auto-suggestions for a partial query.
-   * Returns array of { suggestion, score }.
-   */
-  suggest(query) {
-    if (!this._ready || !query || query.length < 2) return [];
-
-    return this._index
-      .autoSuggest(query, {
-        fuzzy: 0.2,
-        prefix: true,
-      })
-      .slice(0, 8);
-  },
-
-  /**
-   * Browse mode: return all papers matching filters (no query).
-   * Default sort: newest first.
-   */
-  _browse(filters) {
-    let papers = this._papersArray;
 
     if (filters.venues && filters.venues.size < ALL_VENUES.length) {
-      papers = papers.filter((p) => filters.venues.has(p.venue));
+      const vs = [...filters.venues];
+      where.push(`p.venue IN (${vs.map(() => "?").join(",")})`);
+      params.push(...vs);
     }
 
-    if (filters.paperTypes) {
-      papers = papers.filter((p) => filters.paperTypes.has(paperTypeOf(p)));
+    if (filters.paperTypes && filters.paperTypes.size < PAPER_TYPES.length) {
+      const ts = [...filters.paperTypes];
+      where.push(`p.paperType IN (${ts.map(() => "?").join(",")})`);
+      params.push(...ts);
     }
 
     if (filters.yearMin) {
-      papers = papers.filter((p) => p.year >= filters.yearMin);
+      where.push("p.year >= ?");
+      params.push(filters.yearMin);
     }
-
     if (filters.yearMax) {
-      papers = papers.filter((p) => p.year <= filters.yearMax);
+      where.push("p.year <= ?");
+      params.push(filters.yearMax);
     }
 
-    // Default sort for browse: newest first
-    return this._sortResults(
-      [...papers],
-      filters.sort === "relevance" ? "year-desc" : filters.sort,
-    );
+    const whereSql = where.length ? "WHERE " + where.join(" AND ") : "";
+    return { ftsJoin, whereSql, params, hasQuery };
   },
 
-  /**
-   * Sort results by the given sort key.
-   * Note: MiniSearch results are already sorted by relevance, so we only re-sort for other modes.
-   */
-  sortResults(papers, sortKey) {
-    return this._sortResults(papers, sortKey);
-  },
-
-  _sortResults(papers, sortKey) {
-    switch (sortKey) {
-      case "year-desc":
-        return papers.sort((a, b) => b.year - a.year);
+  _orderBy(filters, hasQuery) {
+    switch (filters.sort) {
       case "year-asc":
-        return papers.sort((a, b) => a.year - b.year);
+        return "ORDER BY p.year ASC, p.id DESC";
       case "citations":
-        return papers.sort(
-          (a, b) => (b.citationCount || 0) - (a.citationCount || 0),
-        );
-      default: // 'relevance' — keep MiniSearch order
-        return papers;
+        return "ORDER BY p.citationCount DESC, p.year DESC";
+      case "year-desc":
+        return "ORDER BY p.year DESC, p.id DESC";
+      default: // relevance — bm25 when searching, else newest first
+        return hasQuery
+          ? "ORDER BY bm25(papers_fts, 10.0, 2.0, 5.0)"
+          : "ORDER BY p.year DESC, p.id DESC";
     }
   },
 
-  /** Build a MiniSearch filter function from FilterState. */
-  _makeFilter(filters) {
-    return (result) => {
-      if (filters.venues && filters.venues.size < ALL_VENUES.length) {
-        if (!filters.venues.has(result.venue)) return false;
-      }
-      if (filters.paperTypes && !filters.paperTypes.has(paperTypeOf(result)))
-        return false;
-      if (filters.yearMin && result.year < filters.yearMin) return false;
-      if (filters.yearMax && result.year > filters.yearMax) return false;
-      return true;
-    };
+  /** Fetch one page of full paper rows for the given filters. */
+  async query(filters, limit, offset) {
+    if (!this._ready) return [];
+    const { ftsJoin, whereSql, params, hasQuery } = this._buildWhere(filters);
+    const order = this._orderBy(filters, hasQuery);
+    const rows = await this._db.query(
+      `SELECT p.id, p.title, p.authors, p.year, p.venue, p.doi, p.ee, p.url,
+              p.pages, p.abstract, p.citationCount, p.isWorkshop, p.paperType
+       FROM papers p ${ftsJoin} ${whereSql} ${order} LIMIT ? OFFSET ?`,
+      [...params, limit, offset],
+    );
+    return rows.map(hydratePaper);
+  },
+
+  /** Total number of papers matching the filters (for the result header). */
+  async count(filters) {
+    if (!this._ready) return 0;
+    const { ftsJoin, whereSql, params } = this._buildWhere(filters);
+    const [r] = await this._db.query(
+      `SELECT count(*) AS c FROM papers p ${ftsJoin} ${whereSql}`,
+      params,
+    );
+    return r.c;
+  },
+
+  /** Title suggestions for a partial query. */
+  async suggest(q) {
+    if (!this._ready || !q || q.length < 2) return [];
+    const match = q
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((t) => `"${t.replace(/"/g, '""')}"*`)
+      .join(" ");
+    if (!match) return [];
+    try {
+      const rows = await this._db.query(
+        `SELECT p.title FROM papers p JOIN papers_fts f ON f.rowid = p.id
+         WHERE papers_fts MATCH ? ORDER BY bm25(papers_fts, 10.0, 2.0, 5.0) LIMIT 8`,
+        [match],
+      );
+      return rows.map((r) => ({ suggestion: r.title }));
+    } catch {
+      return [];
+    }
   },
 };
+
+/** Turn a flat DB row into the paper shape the UI renders. */
+function hydratePaper(r) {
+  return {
+    id: r.id,
+    title: r.title,
+    authors: r.authors
+      ? r.authors.split(", ").map((name) => ({ name }))
+      : [],
+    year: r.year,
+    venue: r.venue,
+    doi: r.doi,
+    ee: r.ee,
+    url: r.url,
+    pages: r.pages,
+    abstract: r.abstract,
+    citationCount: r.citationCount,
+    tldr: null,
+    pdfUrl: null,
+    isWorkshop: !!r.isWorkshop,
+    paperType: r.paperType,
+  };
+}

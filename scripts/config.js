@@ -115,9 +115,7 @@ export const VENUES = [
   },
 
   // ── Networking / communications / systems venues ──────────
-  // A few DBLP stream slugs below are marked VERIFY: confirm the hit count
-  // before relying on incremental updates, e.g.
-  //   https://dblp.org/search/publ/api?q=stream:journals/<slug>:&format=json&h=0
+  // DBLP stream slugs verified against https://dblp.org/db/journals/<slug>/
   {
     key: "TOPS",
     name: "ACM TOPS",
@@ -167,14 +165,14 @@ export const VENUES = [
     name: "IEEE Comm. Mag.",
     fullName: "IEEE Communications Magazine",
     color: "#fcd34d",
-    dblpQuery: "stream:journals/icm:", // VERIFY slug
+    dblpQuery: "stream:journals/cm:",
   },
   {
     key: "COMSTDMAG",
     name: "IEEE Comm. Std. Mag.",
     fullName: "IEEE Communications Standards Magazine",
     color: "#fdba74",
-    dblpQuery: "stream:journals/comstd:", // VERIFY slug
+    dblpQuery: "stream:journals/csm:",
   },
   {
     key: "IOTJ",
@@ -202,7 +200,7 @@ export const VENUES = [
     name: "IEEE Netw. Lett.",
     fullName: "IEEE Networking Letters",
     color: "#f0abfc",
-    dblpQuery: "stream:journals/ieeenl:", // VERIFY slug
+    dblpQuery: "stream:journals/ieeenl:",
   },
   {
     key: "IEEESP",
@@ -216,7 +214,7 @@ export const VENUES = [
     name: "IEEE Syst. J.",
     fullName: "IEEE Systems Journal",
     color: "#5eead4",
-    dblpQuery: "stream:journals/sj:", // VERIFY slug
+    dblpQuery: "stream:journals/sj:",
   },
   {
     key: "TCCN",
@@ -244,7 +242,7 @@ export const VENUES = [
     name: "IEEE Wireless Comm.",
     fullName: "IEEE Wireless Communications",
     color: "#7dd3fc",
-    dblpQuery: "stream:journals/wc:", // VERIFY slug
+    dblpQuery: "stream:journals/wc:",
   },
   {
     key: "TON",
@@ -261,6 +259,11 @@ export const VENUES = [
     dblpQuery: "stream:journals/pacmnet:",
   },
 ];
+
+// Journal venues are capped to their newest N entries at build time (the
+// back-catalog grows without bound and isn't what this tool is for).
+// Conferences keep their full history.
+export const JOURNAL_MAX_ENTRIES = 2000;
 
 // DBLP API settings
 export const DBLP_API_BASE = "https://dblp.org/search/publ/api";
