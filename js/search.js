@@ -111,8 +111,6 @@ const SearchEngine = {
     switch (filters.sort) {
       case "year-asc":
         return "ORDER BY p.year ASC, p.id DESC";
-      case "citations":
-        return "ORDER BY p.citationCount DESC, p.year DESC";
       case "year-desc":
         return "ORDER BY p.year DESC, p.id DESC";
       default: // relevance — bm25 when searching, else newest first
@@ -129,7 +127,7 @@ const SearchEngine = {
     const order = this._orderBy(filters, hasQuery);
     const rows = await this._db.query(
       `SELECT p.id, p.title, p.authors, p.year, p.venue, p.doi, p.ee, p.url,
-              p.pages, p.abstract, p.citationCount, p.isWorkshop, p.paperType
+              p.pages, p.abstract, p.isWorkshop, p.paperType
        FROM papers p ${ftsJoin} ${whereSql} ${order} LIMIT ? OFFSET ?`,
       [...params, limit, offset],
     );
@@ -184,9 +182,6 @@ function hydratePaper(r) {
     url: r.url,
     pages: r.pages,
     abstract: r.abstract,
-    citationCount: r.citationCount,
-    tldr: null,
-    pdfUrl: null,
     isWorkshop: !!r.isWorkshop,
     paperType: r.paperType,
   };

@@ -70,9 +70,7 @@ const FilterState = {
     }
     if (
       params.has("sort") &&
-      ["relevance", "year-desc", "year-asc", "citations"].includes(
-        params.get("sort"),
-      )
+      ["relevance", "year-desc", "year-asc"].includes(params.get("sort"))
     ) {
       this.sort = params.get("sort");
     }

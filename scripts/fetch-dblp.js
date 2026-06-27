@@ -485,9 +485,7 @@ async function main() {
     );
   }
   if (fetched > 0) {
-    console.log(
-      "  Note: newly fetched venues have no abstracts yet — run `npm run enrich` then `npm run build-index` for full data.",
-    );
+    console.log("  Note: run `npm run build-sqlite` to rebuild the database.");
   }
 }
 

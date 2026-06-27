@@ -74,6 +74,50 @@ const VENUE_NAMES = {
 };
 
 /**
+ * Full venue names (shown under the short code in the filter dropdowns and as
+ * tooltips). Mirror scripts/config.js `fullName` when venues change.
+ */
+const VENUE_FULLNAMES = {
+  CCS: "ACM Conference on Computer and Communications Security",
+  NDSS: "Network and Distributed System Security Symposium",
+  USENIX: "USENIX Security Symposium",
+  SP: "IEEE Symposium on Security and Privacy",
+  CRYPTO: "Annual International Cryptology Conference",
+  EUROCRYPT:
+    "Intl. Conference on the Theory and Application of Cryptographic Techniques",
+  PETS: "Privacy Enhancing Technologies Symposium",
+  EuroSP: "IEEE European Symposium on Security and Privacy",
+  VehicleSec: "ISOC Symposium on Vehicle Security and Privacy",
+  TITS: "IEEE Transactions on Intelligent Transportation Systems",
+  TVT: "IEEE Transactions on Vehicular Technology",
+  VC: "Vehicular Communications",
+  TIFS: "IEEE Transactions on Information Forensics and Security",
+  TDSC: "IEEE Transactions on Dependable and Secure Computing",
+  COMPSEC: "Computers & Security",
+  TOPS: "ACM Transactions on Privacy and Security",
+  TOCS: "ACM Transactions on Computer Systems",
+  TIOT: "ACM Transactions on Internet of Things",
+  WISEC:
+    "ACM Conference on Security and Privacy in Wireless and Mobile Networks",
+  COMNET: "Computer Networks (Elsevier)",
+  COMST: "IEEE Communications Surveys & Tutorials",
+  COMMAG: "IEEE Communications Magazine",
+  COMSTDMAG: "IEEE Communications Standards Magazine",
+  IOTJ: "IEEE Internet of Things Journal",
+  JSAC: "IEEE Journal on Selected Areas in Communications",
+  IEEENET: "IEEE Network",
+  NETLET: "IEEE Networking Letters",
+  IEEESP: "IEEE Security & Privacy (Magazine)",
+  SYSJ: "IEEE Systems Journal",
+  TCCN: "IEEE Transactions on Cognitive Communications and Networking",
+  TCOM: "IEEE Transactions on Communications",
+  TWC: "IEEE Transactions on Wireless Communications",
+  WCMAG: "IEEE Wireless Communications",
+  TON: "IEEE/ACM Transactions on Networking",
+  PACMNET: "Proceedings of the ACM on Networking",
+};
+
+/**
  * All venue keys (every venue that exists in the dataset).
  */
 const ALL_VENUES = [
@@ -144,12 +188,6 @@ const VENUE_GROUPS = [
     venues: ["TIFS", "TDSC", "COMPSEC", "TOPS", "IEEESP"],
   },
   {
-    id: "vehicular",
-    label: "Vehicular & ITS",
-    dot: "#10b981",
-    venues: ["TITS", "TVT", "VC"],
-  },
-  {
     id: "comms",
     label: "Networking & Communications",
     dot: "#38bdf8",
@@ -162,6 +200,8 @@ const VENUE_GROUPS = [
       "COMST",
       "COMNET",
       "IOTJ",
+      "TVT",
+      "VC",
       "TOCS",
       "TIOT",
       "SYSJ",
@@ -171,6 +211,7 @@ const VENUE_GROUPS = [
       "COMMAG",
       "COMSTDMAG",
       "WCMAG",
+      "TITS"
     ],
   },
 ];

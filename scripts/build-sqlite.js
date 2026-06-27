@@ -5,9 +5,8 @@
  * Range requests — so the page fetches only the few KB of B-tree pages each
  * query touches instead of the whole dataset up front.
  *
- * Reads enriched.json (preferred) or raw-dblp.json, applies the journal trim,
- * and writes a VACUUMed, WAL-free DB that any static host (GitHub Pages
- * included) can serve with byte-range support.
+ * Reads raw-dblp.json, applies the journal trim, and writes a VACUUMed,
+ * WAL-free DB that any static host can serve with byte-range support.
  *
  * Uses Node's built-in node:sqlite (Node >= 22.5, FTS5 compiled in) — no deps.
  */
@@ -17,15 +16,25 @@ import { trimJournals } from "./trim.js";
 
 const OUT = "data/papers.sqlite";
 
+// DBLP doesn't tag posters/demos, but their titles almost always announce it
+// ("Poster: …", "Demo: …", "Demonstration of …"). Derive the type here so the
+// Type filter and the card tag work without re-fetching.
+const POSTER_RE = /^\s*posters?\b[\s:.\-—]/i;
+const DEMO_RE = /^\s*(?:demo|demonstrations?)\b[\s:.\-—]/i;
+
+function classifyType(p) {
+  if (p.paperType) return p.paperType;
+  const title = p.title || "";
+  if (POSTER_RE.test(title)) return "poster";
+  if (DEMO_RE.test(title)) return "demo";
+  return p.isWorkshop ? "workshop" : "full";
+}
+
 function main() {
-  let inputFile = "data/enriched.json";
+  const inputFile = "data/raw-dblp.json";
   if (!existsSync(inputFile)) {
-    inputFile = "data/raw-dblp.json";
-    if (!existsSync(inputFile)) {
-      console.error("No data files found. Run fetch-dblp.js / seed first.");
-      process.exit(1);
-    }
-    console.log("Note: using raw DBLP data (no abstracts).\n");
+    console.error("No data found. Run fetch-dblp.js / seed from the dump first.");
+    process.exit(1);
   }
 
   const papers = trimJournals(JSON.parse(readFileSync(inputFile, "utf-8")));
@@ -50,7 +59,6 @@ function main() {
     url           TEXT,
     pages         TEXT,
     abstract      TEXT,
-    citationCount INTEGER,
     isWorkshop    INTEGER,
     paperType     TEXT
   )`);
@@ -64,15 +72,15 @@ function main() {
   )`);
 
   const insert = db.prepare(`INSERT INTO papers
-    (id, title, authors, year, venue, doi, ee, url, pages, abstract, citationCount, isWorkshop, paperType)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+    (id, title, authors, year, venue, doi, ee, url, pages, abstract, isWorkshop, paperType)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`);
 
   db.exec("BEGIN");
   let rowid = 0;
   for (const p of papers) {
     rowid += 1;
     const authors = (p.authors || []).map((a) => a.name).join(", ");
-    const paperType = p.paperType || (p.isWorkshop ? "workshop" : "full");
+    const paperType = classifyType(p);
     insert.run(
       rowid,
       p.title || "",
@@ -84,7 +92,6 @@ function main() {
       p.url || null,
       p.pages || null,
       p.abstract || null,
-      p.citationCount ?? null,
       p.isWorkshop ? 1 : 0,
       paperType,
     );

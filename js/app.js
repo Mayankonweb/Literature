@@ -70,7 +70,7 @@
 
     const venueColor = `var(--color-${paper.venue})`;
 
-    let badges = `<span class="venue-badge" style="--badge-color: ${venueColor}">${escapeHtml(VENUE_NAMES[paper.venue] || paper.venue)}</span>`;
+    let badges = `<span class="venue-badge" style="--badge-color: ${venueColor}" title="${escapeHtml(VENUE_FULLNAMES[paper.venue] || VENUE_NAMES[paper.venue] || paper.venue)}">${escapeHtml(VENUE_NAMES[paper.venue] || paper.venue)}</span>`;
 
     // Paper type shown as an inline tag next to the title
     const type = paperTypeOf(paper); // "full" | "workshop" | "poster" | "demo"
@@ -80,9 +80,6 @@
       : "";
 
     let meta = `<span class="year">${paper.year}</span>`;
-    if (paper.citationCount != null && paper.citationCount > 0) {
-      meta += `<span class="citation-badge" title="Citations">\u{1F4D6} ${paper.citationCount}</span>`;
-    }
 
     let links = "";
     if (paper.doi) {
@@ -91,19 +88,15 @@
     if (paper.url) {
       links += `<a href="${escapeHtml(paper.url)}" target="_blank" rel="noopener">DBLP</a>`;
     }
-    if (paper.pdfUrl) {
-      links += `<a href="${escapeHtml(paper.pdfUrl)}" target="_blank" rel="noopener">PDF</a>`;
-    }
 
     let expandSection = "";
-    if (paper.abstract || paper.tldr) {
+    if (paper.abstract) {
       expandSection = `
         <div class="paper-expand" onclick="this.nextElementSibling.classList.toggle('visible')">
           &#9662; Abstract
         </div>
         <div class="paper-abstract">
-          ${paper.tldr ? `<p class="paper-tldr">TL;DR: ${escapeHtml(paper.tldr)}</p>` : ""}
-          ${paper.abstract ? `<p>${escapeHtml(paper.abstract)}</p>` : ""}
+          <p>${escapeHtml(paper.abstract)}</p>
         </div>`;
     }
 

@@ -47,16 +47,16 @@ export const VENUES = [
     color: "#06b6d4",
     dblpQuery: "venue:EUROCRYPT:",
   },
-  {
-    key: "PETS",
-    name: "PETS",
-    fullName: "Privacy Enhancing Technologies Symposium",
-    color: "#0d9488",
-    // PETS proceedings are published as PoPETs (Proceedings on Privacy
-    // Enhancing Technologies). Verify the hit count before committing:
-    //   https://dblp.org/search/publ/api?q=stream:journals/popets:&format=json&h=0
-    dblpQuery: "stream:journals/popets:",
-  },
+  // {
+  //   key: "PETS",
+  //   name: "PETS",
+  //   fullName: "Privacy Enhancing Technologies Symposium",
+  //   color: "#0d9488",
+  //   // PETS proceedings are published as PoPETs (Proceedings on Privacy
+  //   // Enhancing Technologies). Verify the hit count before committing:
+  //   //   https://dblp.org/search/publ/api?q=stream:journals/popets:&format=json&h=0
+  //   dblpQuery: "stream:journals/popets:",
+  // },
   {
     key: "EuroSP",
     name: "EURO S&P",
@@ -71,41 +71,41 @@ export const VENUES = [
     color: "#f97316",
     dblpQuery: "venue:VehicleSec:",
   },
-  {
-    key: "TITS",
-    name: "IEEE T-ITS",
-    fullName: "IEEE Transactions on Intelligent Transportation Systems",
-    color: "#10b981",
-    dblpQuery: "stream:journals/tits:",
-  },
-  {
-    key: "TVT",
-    name: "IEEE TVT",
-    fullName: "IEEE Transactions on Vehicular Technology",
-    color: "#8b5cf6",
-    dblpQuery: "stream:journals/tvt:",
-  },
-  {
-    key: "VC",
-    name: "Veh. Comms.",
-    fullName: "Vehicular Communications",
-    color: "#84cc16",
-    dblpQuery: "stream:journals/vc:",
-  },
-  {
-    key: "TIFS",
-    name: "TIFS",
-    fullName: "IEEE Transactions on Information Forensics and Security",
-    color: "#f59e0b",
-    dblpQuery: "stream:journals/tifs:",
-  },
-  {
-    key: "TDSC",
-    name: "TDSC",
-    fullName: "IEEE Transactions on Dependable and Secure Computing",
-    color: "#fda4af",
-    dblpQuery: "stream:journals/tdsc:",
-  },
+  // {
+  //   key: "TITS",
+  //   name: "IEEE T-ITS",
+  //   fullName: "IEEE Transactions on Intelligent Transportation Systems",
+  //   color: "#10b981",
+  //   dblpQuery: "stream:journals/tits:",
+  // },
+  // {
+  //   key: "TVT",
+  //   name: "IEEE TVT",
+  //   fullName: "IEEE Transactions on Vehicular Technology",
+  //   color: "#8b5cf6",
+  //   dblpQuery: "stream:journals/tvt:",
+  // },
+  // {
+  //   key: "VC",
+  //   name: "Veh. Comms.",
+  //   fullName: "Vehicular Communications",
+  //   color: "#84cc16",
+  //   dblpQuery: "stream:journals/vc:",
+  // },
+  // {
+  //   key: "TIFS",
+  //   name: "TIFS",
+  //   fullName: "IEEE Transactions on Information Forensics and Security",
+  //   color: "#f59e0b",
+  //   dblpQuery: "stream:journals/tifs:",
+  // },
+  // {
+  //   key: "TDSC",
+  //   name: "TDSC",
+  //   fullName: "IEEE Transactions on Dependable and Secure Computing",
+  //   color: "#fda4af",
+  //   dblpQuery: "stream:journals/tdsc:",
+  // },
   {
     key: "COMPSEC",
     name: "Comp. & Sec.",
@@ -116,28 +116,28 @@ export const VENUES = [
 
   // ── Networking / communications / systems venues ──────────
   // DBLP stream slugs verified against https://dblp.org/db/journals/<slug>/
-  {
-    key: "TOPS",
-    name: "ACM TOPS",
-    fullName: "ACM Transactions on Privacy and Security",
-    color: "#a3e635",
-    // Formerly TISSEC; DBLP still keys the stream as tissec.
-    dblpQuery: "stream:journals/tissec:",
-  },
-  {
-    key: "TOCS",
-    name: "ACM TOCS",
-    fullName: "ACM Transactions on Computer Systems",
-    color: "#fb7185",
-    dblpQuery: "stream:journals/tocs:",
-  },
-  {
-    key: "TIOT",
-    name: "ACM TIOT",
-    fullName: "ACM Transactions on Internet of Things",
-    color: "#2dd4bf",
-    dblpQuery: "stream:journals/tiot:",
-  },
+  // {
+  //   key: "TOPS",
+  //   name: "ACM TOPS",
+  //   fullName: "ACM Transactions on Privacy and Security",
+  //   color: "#a3e635",
+  //   // Formerly TISSEC; DBLP still keys the stream as tissec.
+  //   dblpQuery: "stream:journals/tissec:",
+  // },
+  // {
+  //   key: "TOCS",
+  //   name: "ACM TOCS",
+  //   fullName: "ACM Transactions on Computer Systems",
+  //   color: "#fb7185",
+  //   dblpQuery: "stream:journals/tocs:",
+  // },
+  // {
+  //   key: "TIOT",
+  //   name: "ACM TIOT",
+  //   fullName: "ACM Transactions on Internet of Things",
+  //   color: "#2dd4bf",
+  //   dblpQuery: "stream:journals/tiot:",
+  // },
   {
     key: "WISEC",
     name: "WiSec",
@@ -146,13 +146,13 @@ export const VENUES = [
     color: "#e879f9",
     dblpQuery: "venue:WISEC:",
   },
-  {
-    key: "COMNET",
-    name: "Comput. Netw.",
-    fullName: "Computer Networks (Elsevier)",
-    color: "#38bdf8",
-    dblpQuery: "stream:journals/cn:",
-  },
+  // {
+  //   key: "COMNET",
+  //   name: "Comput. Netw.",
+  //   fullName: "Computer Networks (Elsevier)",
+  //   color: "#38bdf8",
+  //   dblpQuery: "stream:journals/cn:",
+  // },
   {
     key: "COMST",
     name: "IEEE COMST",
@@ -160,13 +160,13 @@ export const VENUES = [
     color: "#4ade80",
     dblpQuery: "stream:journals/comsur:",
   },
-  {
-    key: "COMMAG",
-    name: "IEEE Comm. Mag.",
-    fullName: "IEEE Communications Magazine",
-    color: "#fcd34d",
-    dblpQuery: "stream:journals/cm:",
-  },
+  // {
+  //   key: "COMMAG",
+  //   name: "IEEE Comm. Mag.",
+  //   fullName: "IEEE Communications Magazine",
+  //   color: "#fcd34d",
+  //   dblpQuery: "stream:journals/cm:",
+  // },
   {
     key: "COMSTDMAG",
     name: "IEEE Comm. Std. Mag.",
@@ -174,27 +174,27 @@ export const VENUES = [
     color: "#fdba74",
     dblpQuery: "stream:journals/csm:",
   },
-  {
-    key: "IOTJ",
-    name: "IEEE IoT-J",
-    fullName: "IEEE Internet of Things Journal",
-    color: "#67e8f9",
-    dblpQuery: "stream:journals/iotj:",
-  },
-  {
-    key: "JSAC",
-    name: "IEEE JSAC",
-    fullName: "IEEE Journal on Selected Areas in Communications",
-    color: "#818cf8",
-    dblpQuery: "stream:journals/jsac:",
-  },
-  {
-    key: "IEEENET",
-    name: "IEEE Network",
-    fullName: "IEEE Network",
-    color: "#c4b5fd",
-    dblpQuery: "stream:journals/network:",
-  },
+  // {
+  //   key: "IOTJ",
+  //   name: "IEEE IoT-J",
+  //   fullName: "IEEE Internet of Things Journal",
+  //   color: "#67e8f9",
+  //   dblpQuery: "stream:journals/iotj:",
+  // },
+  // {
+  //   key: "JSAC",
+  //   name: "IEEE JSAC",
+  //   fullName: "IEEE Journal on Selected Areas in Communications",
+  //   color: "#818cf8",
+  //   dblpQuery: "stream:journals/jsac:",
+  // },
+  // {
+  //   key: "IEEENET",
+  //   name: "IEEE Network",
+  //   fullName: "IEEE Network",
+  //   color: "#c4b5fd",
+  //   dblpQuery: "stream:journals/network:",
+  // },
   {
     key: "NETLET",
     name: "IEEE Netw. Lett.",
@@ -209,27 +209,27 @@ export const VENUES = [
     color: "#facc15",
     dblpQuery: "stream:journals/ieeesp:",
   },
-  {
-    key: "SYSJ",
-    name: "IEEE Syst. J.",
-    fullName: "IEEE Systems Journal",
-    color: "#5eead4",
-    dblpQuery: "stream:journals/sj:",
-  },
-  {
-    key: "TCCN",
-    name: "IEEE TCCN",
-    fullName: "IEEE Transactions on Cognitive Communications and Networking",
-    color: "#93c5fd",
-    dblpQuery: "stream:journals/tccn:",
-  },
-  {
-    key: "TCOM",
-    name: "IEEE TCOM",
-    fullName: "IEEE Transactions on Communications",
-    color: "#fca5a5",
-    dblpQuery: "stream:journals/tcom:",
-  },
+  // {
+  //   key: "SYSJ",
+  //   name: "IEEE Syst. J.",
+  //   fullName: "IEEE Systems Journal",
+  //   color: "#5eead4",
+  //   dblpQuery: "stream:journals/sj:",
+  // },
+  // {
+  //   key: "TCCN",
+  //   name: "IEEE TCCN",
+  //   fullName: "IEEE Transactions on Cognitive Communications and Networking",
+  //   color: "#93c5fd",
+  //   dblpQuery: "stream:journals/tccn:",
+  // },
+  // {
+  //   key: "TCOM",
+  //   name: "IEEE TCOM",
+  //   fullName: "IEEE Transactions on Communications",
+  //   color: "#fca5a5",
+  //   dblpQuery: "stream:journals/tcom:",
+  // },
   {
     key: "TWC",
     name: "IEEE TWC",
@@ -276,10 +276,4 @@ export const DBLP_DELAY_MS = 3000; // Delay between API requests to be polite
 // (responses past offset 10000 come back with an empty hit list). Results are
 // returned newest-first, so this window always covers the most recent papers —
 // we just can't mirror a venue's entire back-catalog beyond it.
-export const DBLP_MAX_RESULTS = 10000;
-
-// Semantic Scholar API settings
-export const S2_API_BASE = "https://api.semanticscholar.org/graph/v1/paper";
-export const S2_FIELDS = "abstract,citationCount,tldr,openAccessPdf";
-export const S2_RATE_LIMIT = 5; // requests per second
-export const S2_CACHE_DIR = "data/s2-cache";
+export const DBLP_MAX_RESULTS = 5000;

@@ -63,10 +63,14 @@ const FilterUI = (function () {
       btn.type = "button";
       btn.className = "fd-option";
       btn.dataset.venue = key;
+      const full = VENUE_FULLNAMES[key];
       btn.innerHTML = `
         <span class="fd-check">${ICONS.check}</span>
         <span class="fd-swatch" style="background:var(--color-${key})"></span>
-        <span class="fd-label">${escapeHtml(VENUE_NAMES[key] || key)}</span>
+        <span class="fd-label">
+          <span class="fd-short">${escapeHtml(VENUE_NAMES[key] || key)}</span>
+          ${full ? `<span class="fd-full">${escapeHtml(full)}</span>` : ""}
+        </span>
         <span class="fd-num" data-count></span>`;
       btn.addEventListener("click", () => FilterState.toggleVenue(key));
       optsEl.appendChild(btn);
@@ -212,7 +216,9 @@ const FilterUI = (function () {
     const chips = selected
       .map(
         (k) =>
-          `<span class="av-chip" style="--chip-color:var(--color-${k})">${escapeHtml(
+          `<span class="av-chip" style="--chip-color:var(--color-${k})" title="${escapeHtml(
+            VENUE_FULLNAMES[k] || VENUE_NAMES[k] || k,
+          )}">${escapeHtml(
             VENUE_NAMES[k] || k,
           )}<span class="av-x" data-remove="${k}">&times;</span></span>`,
       )
