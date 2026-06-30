@@ -39,7 +39,7 @@ const META_FILE = "data/dblp-meta.json";
 const DB_FILE = "data/papers.json";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const FETCH_RETRY_ATTEMPTS = 6;
+const FETCH_RETRY_ATTEMPTS = 10;
 const FETCH_RETRY_DELAY_MS = 5000;
 const FETCH_MAX_RETRY_DELAY_MS = 120000;
 // Abort a single request that stalls, so a hung connection becomes a retryable

@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build-data-quick": "node scripts/fetch-dblp.js && node scripts/build-index.js",
     "fetch-dblp": "node scripts/fetch-dblp.js",
     "build-sqlite": "node scripts/build-sqlite.js",
     "build-data": "node scripts/fetch-dblp.js && node scripts/build-sqlite.js",

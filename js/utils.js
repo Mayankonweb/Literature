@@ -32,188 +32,215 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+```javascript
 /**
- * Venue display names (short labels used in chips/menus).
+ * Venue display names (short labels used in chips/menus)
  */
 const VENUE_NAMES = {
-  CCS: "CCS",
-  NDSS: "NDSS",
-  USENIX: "USENIX Security",
-  SP: "IEEE S&P",
-  CRYPTO: "CRYPTO",
-  EUROCRYPT: "EUROCRYPT",
-  PETS: "PETS",
-  EuroSP: "EURO S&P",
-  VehicleSec: "VehicleSec",
-  TITS: "IEEE T-ITS",
-  TVT: "IEEE TVT",
-  VC: "Veh. Comms.",
-  TIFS: "TIFS",
-  TDSC: "TDSC",
-  COMPSEC: "Comp. & Sec.",
-  TOPS: "ACM TOPS",
-  TOCS: "ACM TOCS",
-  TIOT: "ACM TIOT",
-  WISEC: "WiSec",
-  COMNET: "Comput. Netw.",
-  COMST: "IEEE COMST",
-  COMMAG: "IEEE Comm. Mag.",
-  COMSTDMAG: "Comm. Std. Mag.",
-  IOTJ: "IEEE IoT-J",
-  JSAC: "IEEE JSAC",
-  IEEENET: "IEEE Network",
-  NETLET: "Netw. Lett.",
-  IEEESP: "IEEE S&P Mag.",
-  SYSJ: "IEEE Syst. J.",
-  TCCN: "IEEE TCCN",
-  TCOM: "IEEE TCOM",
-  TWC: "IEEE TWC",
-  WCMAG: "Wireless Comm.",
+  // Networking / Systems
+  SIGCOMM: "SIGCOMM",
+  NSDI: "NSDI",
+  INFOCOM: "INFOCOM",
+  CoNEXT: "CoNEXT",
+  IMC: "IMC",
+  MobiCom: "MobiCom",
+  OSDI: "OSDI",
+  SOSP: "SOSP",
+  MLSYS: "MLSys",
+  EuroSys: "EuroSys",
+
+  // Networking Journals
   TON: "IEEE/ACM ToN",
-  PACMNET: "ACM PACMNET",
+  JSAC: "IEEE JSAC",
+  TNETSEC: "IEEE TNSE",
+  COMNET: "Comp. Netw.",
+  COMST: "IEEE COMST",
+
+  // ML / AI Conferences
+  NeurIPS: "NeurIPS",
+  ICML: "ICML",
+  ICLR: "ICLR",
+  AAAI: "AAAI",
+  AISTATS: "AISTATS",
+  KDD: "KDD",
+  WWW: "WWW",
+  ICDM: "ICDM",
+
+  // ML Journals
+  JMLR: "JMLR",
+  TPAMI: "TPAMI",
+  MLJ: "ML Journal",
+  PR: "Pattern Rec.",
+
+  // XAI / Interpretability
+  FAccT: "FAccT",
+  AIES: "AIES",
+
+  // RL
+  RLC: "RLC",
+  AAMAS: "AAMAS",
+
+  // Streaming / Multimedia
+  NOSSDAV: "NOSSDAV",
+  MMSys: "MMSys",
+  MM: "ACM MM",
+
 };
 
+
 /**
- * Full venue names (shown under the short code in the filter dropdowns and as
- * tooltips). Mirror scripts/config.js `fullName` when venues change.
+ * Full venue names
  */
 const VENUE_FULLNAMES = {
-  CCS: "ACM Conference on Computer and Communications Security",
-  NDSS: "Network and Distributed System Security Symposium",
-  USENIX: "USENIX Security Symposium",
-  SP: "IEEE Symposium on Security and Privacy",
-  CRYPTO: "Annual International Cryptology Conference",
-  EUROCRYPT:
-    "Intl. Conference on the Theory and Application of Cryptographic Techniques",
-  PETS: "Privacy Enhancing Technologies Symposium",
-  EuroSP: "IEEE European Symposium on Security and Privacy",
-  VehicleSec: "ISOC Symposium on Vehicle Security and Privacy",
-  TITS: "IEEE Transactions on Intelligent Transportation Systems",
-  TVT: "IEEE Transactions on Vehicular Technology",
-  VC: "Vehicular Communications",
-  TIFS: "IEEE Transactions on Information Forensics and Security",
-  TDSC: "IEEE Transactions on Dependable and Secure Computing",
-  COMPSEC: "Computers & Security",
-  TOPS: "ACM Transactions on Privacy and Security",
-  TOCS: "ACM Transactions on Computer Systems",
-  TIOT: "ACM Transactions on Internet of Things",
-  WISEC:
-    "ACM Conference on Security and Privacy in Wireless and Mobile Networks",
+  SIGCOMM: "ACM SIGCOMM Conference",
+  NSDI: "USENIX Networked Systems Design and Implementation",
+  INFOCOM: "IEEE International Conference on Computer Communications",
+  CoNEXT: "ACM International Conference on Emerging Networking Experiments and Technologies",
+  IMC: "ACM Internet Measurement Conference",
+  MobiCom: "ACM International Conference on Mobile Computing and Networking",
+  OSDI: "USENIX Symposium on Operating Systems Design and Implementation",
+  SOSP: "ACM Symposium on Operating Systems Principles",
+  MLSYS: "Conference on Machine Learning and Systems",
+  EuroSys: "European Conference on Computer Systems",
+
+  TON: "IEEE/ACM Transactions on Networking",
+  JSAC: "IEEE Journal on Selected Areas in Communications",
+  TNETSEC: "IEEE Transactions on Network Science and Engineering",
   COMNET: "Computer Networks (Elsevier)",
   COMST: "IEEE Communications Surveys & Tutorials",
-  COMMAG: "IEEE Communications Magazine",
-  COMSTDMAG: "IEEE Communications Standards Magazine",
-  IOTJ: "IEEE Internet of Things Journal",
-  JSAC: "IEEE Journal on Selected Areas in Communications",
-  IEEENET: "IEEE Network",
-  NETLET: "IEEE Networking Letters",
-  IEEESP: "IEEE Security & Privacy (Magazine)",
-  SYSJ: "IEEE Systems Journal",
-  TCCN: "IEEE Transactions on Cognitive Communications and Networking",
-  TCOM: "IEEE Transactions on Communications",
-  TWC: "IEEE Transactions on Wireless Communications",
-  WCMAG: "IEEE Wireless Communications",
-  TON: "IEEE/ACM Transactions on Networking",
-  PACMNET: "Proceedings of the ACM on Networking",
+
+  NeurIPS: "Conference on Neural Information Processing Systems",
+  ICML: "International Conference on Machine Learning",
+  ICLR: "International Conference on Learning Representations",
+  AAAI: "AAAI Conference on Artificial Intelligence",
+  AISTATS: "International Conference on Artificial Intelligence and Statistics",
+  KDD: "ACM SIGKDD Conference on Knowledge Discovery and Data Mining",
+  WWW: "The Web Conference",
+  ICDM: "IEEE International Conference on Data Mining",
+
+  JMLR: "Journal of Machine Learning Research",
+  TPAMI: "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+  MLJ: "Machine Learning Journal",
+  PR: "Pattern Recognition",
+
+  FAccT: "ACM Conference on Fairness, Accountability, and Transparency",
+  AIES: "AAAI/ACM Conference on AI, Ethics, and Society",
+
+  RLC: "Reinforcement Learning Conference",
+  AAMAS: "International Conference on Autonomous Agents and Multiagent Systems",
+
+  NOSSDAV: "Network and Operating Systems Support for Digital Audio and Video",
+  MMSys: "ACM Multimedia Systems Conference",
+  MM: "ACM Multimedia",
 };
 
-/**
- * All venue keys (every venue that exists in the dataset).
- */
-const ALL_VENUES = [
-  "CCS",
-  "NDSS",
-  "USENIX",
-  "SP",
-  "CRYPTO",
-  "EUROCRYPT",
-  "PETS",
-  "EuroSP",
-  "VehicleSec",
-  "TITS",
-  "TVT",
-  "VC",
-  "TIFS",
-  "TDSC",
-  "COMPSEC",
-  "TOPS",
-  "TOCS",
-  "TIOT",
-  "WISEC",
-  "COMNET",
-  "COMST",
-  "COMMAG",
-  "COMSTDMAG",
-  "IOTJ",
-  "JSAC",
-  "IEEENET",
-  "NETLET",
-  "IEEESP",
-  "SYSJ",
-  "TCCN",
-  "TCOM",
-  "TWC",
-  "WCMAG",
-  "TON",
-  "PACMNET",
-];
 
 /**
- * Grouped venues — drives the collapsible filter sub-menus.
- * Each group renders as one dropdown in the filter bar.
- * `dot` is the small color indicator shown on the dropdown trigger.
+ * All venue keys
+ */
+const ALL_VENUES = Object.keys(VENUE_NAMES);
+
+
+/**
+ * Grouped venues
  */
 const VENUE_GROUPS = [
   {
-    id: "conf",
-    label: "Conferences",
+    id: "networking",
+    label: "Networking & Systems",
     dot: "#2563eb",
     venues: [
-      "CCS",
-      "NDSS",
-      "USENIX",
-      "SP",
-      "CRYPTO",
-      "EUROCRYPT",
-      "PETS",
-      "EuroSP",
-      "VehicleSec",
-      "WISEC",
-    ],
+      "SIGCOMM",
+      "NSDI",
+      "INFOCOM",
+      "CoNEXT",
+      "IMC",
+      "MobiCom",
+      "OSDI",
+      "SOSP",
+      "EuroSys",
+      "MLSYS"
+    ]
   },
+
   {
-    id: "journals",
-    label: "Security Journals",
-    dot: "#6366f1",
-    venues: ["TIFS", "TDSC", "COMPSEC", "TOPS", "IEEESP"],
-  },
-  {
-    id: "comms",
-    label: "Networking & Communications",
+    id: "network_journals",
+    label: "Networking Journals",
     dot: "#38bdf8",
     venues: [
       "TON",
       "JSAC",
-      "TCOM",
-      "TWC",
-      "TCCN",
-      "COMST",
+      "TNETSEC",
       "COMNET",
-      "IOTJ",
-      "TVT",
-      "VC",
-      "TOCS",
-      "TIOT",
-      "SYSJ",
-      "PACMNET",
-      "IEEENET",
-      "NETLET",
-      "COMMAG",
-      "COMSTDMAG",
-      "WCMAG",
-      "TITS"
-    ],
+      "COMST"
+    ]
   },
+
+  {
+    id: "ml",
+    label: "Machine Learning",
+    dot: "#16a34a",
+    venues: [
+      "NeurIPS",
+      "ICML",
+      "ICLR",
+      "AAAI",
+      "AISTATS",
+      "KDD",
+      "WWW",
+      "ICDM",
+      "JMLR",
+      "TPAMI",
+      "MLJ",
+      "PR"
+    ]
+  },
+
+  {
+    id: "xai",
+    label: "XAI / Interpretability",
+    dot: "#9333ea",
+    venues: [
+      "FAccT",
+      "AIES"
+    ]
+  },
+
+  {
+    id: "rl",
+    label: "Reinforcement Learning",
+    dot: "#f59e0b",
+    venues: [
+      "RLC",
+      "AAMAS"
+    ]
+  },
+
+  {
+    id: "streaming",
+    label: "ABR / Streaming",
+    dot: "#ef4444",
+    venues: [
+      "NOSSDAV",
+      "MMSys",
+      "MM"
+    ]
+  }
+
+];
+
+
+/**
+ * Default venues (top-tier only)
+ */
+const DEFAULT_VENUES = [
+  "SIGCOMM",
+  "NSDI",
+  "INFOCOM",
+  "NeurIPS",
+  "ICML",
+  "ICLR",
+  "MLSYS"
 ];
 
 /**

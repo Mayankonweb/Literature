@@ -77,42 +77,40 @@
     --dur-normal: 220ms;
     --dur-slow: 380ms;
 
-    /* Venue colors — vivid on dark */
-    --color-CCS: #34d399;
-    --color-NDSS: #60a5fa;
-    --color-USENIX: #f87171;
-    --color-SP: #c084fc;
-    --color-CRYPTO: #fbbf24;
-    --color-EUROCRYPT: #22d3ee;
-    --color-PETS: #14b8a6;
-    --color-EuroSP: #3b82f6;
-    --color-VehicleSec: #f97316;
-    --color-TITS: #10b981;
-    --color-TVT: #8b5cf6;
-    --color-VC: #06b6d4;
-    --color-TIFS: #f59e0b;
-    --color-TDSC: #ef4444;
-    --color-COMPSEC: #6366f1;
-    --color-TOPS: #a3e635;
-    --color-TOCS: #fb7185;
-    --color-TIOT: #2dd4bf;
-    --color-WISEC: #e879f9;
-    --color-COMNET: #38bdf8;
-    --color-COMST: #4ade80;
-    --color-COMMAG: #fcd34d;
-    --color-COMSTDMAG: #fdba74;
-    --color-IOTJ: #67e8f9;
-    --color-JSAC: #818cf8;
-    --color-IEEENET: #c4b5fd;
-    --color-NETLET: #f0abfc;
-    --color-IEEESP: #facc15;
-    --color-SYSJ: #5eead4;
-    --color-TCCN: #93c5fd;
-    --color-TCOM: #fca5a5;
-    --color-TWC: #d8b4fe;
-    --color-WCMAG: #7dd3fc;
+        /* Venue colors — Networking / ML / Systems */
+
+    --color-SIGCOMM: #22c55e;   /* green */
+    --color-NSDI: #3b82f6;      /* blue */
+    --color-INFOCOM: #ef4444;   /* red */
+    --color-CONEXT: #a855f7;    /* purple */
+    --color-IMC: #f59e0b;       /* amber */
+    --color-MOBICOM: #06b6d4;   /* cyan */
+    --color-EUROSYS: #14b8a6;   /* teal */
+    --color-OSDI: #f97316;      /* orange */
+    --color-SOSP: #6366f1;      /* indigo */
+
+    --color-NEURIPS: #16a34a;
+    --color-ICML: #0ea5e9;
+    --color-ICLR: #8b5cf6;
+    --color-AAAI: #f43f5e;
+    --color-AISTATS: #84cc16;
+    --color-KDD: #eab308;
+    --color-WWW: #2dd4bf;
+    --color-MLSYS: #ec4899;
+
+    --color-NOSSDAV: #38bdf8;
+    --color-MMSYS: #4ade80;
+    --color-ACMMM: #fdba74;
+
+    --color-FACT: #9333ea;
+    --color-AIES: #db2777;
+
+    --color-AAMAS: #facc15;
+
     --color-TON: #86efac;
-    --color-PACMNET: #fda4af;
+    --color-JSAC: #818cf8;
+    --color-JMLR: #fb7185;
+    --color-COMST: #4ade80;
 }
 
 /* ── Light Theme ─────────────────────────────── */
@@ -152,12 +150,40 @@
         0 8px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--border-active);
     --shadow-glow: 0 0 20px rgba(160, 112, 40, 0.08);
 
-    --color-CCS: #16a34a;
-    --color-NDSS: #2563eb;
-    --color-USENIX: #dc2626;
-    --color-SP: #9333ea;
-    --color-CRYPTO: #d97706;
-    --color-EUROCRYPT: #0891b2;
+        /* Venue colors — Networking / ML / Systems */
+
+    --color-SIGCOMM: #22c55e;   /* green */
+    --color-NSDI: #3b82f6;      /* blue */
+    --color-INFOCOM: #ef4444;   /* red */
+    --color-CONEXT: #a855f7;    /* purple */
+    --color-IMC: #f59e0b;       /* amber */
+    --color-MOBICOM: #06b6d4;   /* cyan */
+    --color-EUROSYS: #14b8a6;   /* teal */
+    --color-OSDI: #f97316;      /* orange */
+    --color-SOSP: #6366f1;      /* indigo */
+
+    --color-NEURIPS: #16a34a;
+    --color-ICML: #0ea5e9;
+    --color-ICLR: #8b5cf6;
+    --color-AAAI: #f43f5e;
+    --color-AISTATS: #84cc16;
+    --color-KDD: #eab308;
+    --color-WWW: #2dd4bf;
+    --color-MLSYS: #ec4899;
+
+    --color-NOSSDAV: #38bdf8;
+    --color-MMSYS: #4ade80;
+    --color-ACMMM: #fdba74;
+
+    --color-FACT: #9333ea;
+    --color-AIES: #db2777;
+
+    --color-AAMAS: #facc15;
+
+    --color-TON: #86efac;
+    --color-JSAC: #818cf8;
+    --color-JMLR: #fb7185;
+    --color-COMST: #4ade80;
 }
 
 @media (prefers-color-scheme: light) {
@@ -200,12 +226,40 @@
             0 8px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--border-active);
         --shadow-glow: 0 0 20px rgba(160, 112, 40, 0.08);
 
-        --color-CCS: #16a34a;
-        --color-NDSS: #2563eb;
-        --color-USENIX: #dc2626;
-        --color-SP: #9333ea;
-        --color-CRYPTO: #d97706;
-        --color-EUROCRYPT: #0891b2;
+            /* Venue colors — Networking / ML / Systems */
+
+    --color-SIGCOMM: #22c55e;   /* green */
+    --color-NSDI: #3b82f6;      /* blue */
+    --color-INFOCOM: #ef4444;   /* red */
+    --color-CONEXT: #a855f7;    /* purple */
+    --color-IMC: #f59e0b;       /* amber */
+    --color-MOBICOM: #06b6d4;   /* cyan */
+    --color-EUROSYS: #14b8a6;   /* teal */
+    --color-OSDI: #f97316;      /* orange */
+    --color-SOSP: #6366f1;      /* indigo */
+
+    --color-NEURIPS: #16a34a;
+    --color-ICML: #0ea5e9;
+    --color-ICLR: #8b5cf6;
+    --color-AAAI: #f43f5e;
+    --color-AISTATS: #84cc16;
+    --color-KDD: #eab308;
+    --color-WWW: #2dd4bf;
+    --color-MLSYS: #ec4899;
+
+    --color-NOSSDAV: #38bdf8;
+    --color-MMSYS: #4ade80;
+    --color-ACMMM: #fdba74;
+
+    --color-FACT: #9333ea;
+    --color-AIES: #db2777;
+
+    --color-AAMAS: #facc15;
+
+    --color-TON: #86efac;
+    --color-JSAC: #818cf8;
+    --color-JMLR: #fb7185;
+    --color-COMST: #4ade80;
     }
 }
 
